@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-image: url('https://static.vecteezy.com/system/resources/previews/006/415/315/original/kids-background-free-vector.jpg'); /* Replace 'background.jpg' with the actual filename of your image */
+            background-size: cover;
+            /* background-position: center; */
+            background-repeat: no-repeat;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* align-self: flex-end; */
+        }
+
+        .button-class{
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        p,h1 {
+            text-align: center;
+            padding: 50px;
+            /* color: white; */
+            color: navy;
+
+        }
+
+
+        a {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: black; /* Green background color */
+            border-radius: 10%; /* Rounded corners */
+            transition: background-color 0.3s; /* Smooth transition on hover */
+            text-align: center;
+            border: 2px solid black;
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: 700;
+            
+        }
+
+        a img {
+            height: 130px;
+            width: 100%;
+            border-radius: 10%;
+            margin-bottom: 10px;
+        }
+
+        #score-board{
+            height: 150px;
+            width: 200px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid white;
+            background-color: rgb(11, 11, 69);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 50%;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0 auto;
+        }
+        h1 {
+  color: maroon;
+  text-shadow: 4px 4px 8px grey;
+  text-align: center;
+  font-weight: 700;
+  font-size: 50px;
+}
+
+    </style>
+    <title>Kid's Game</title>
+</head>
+
+<body>
+    <div class="container">
+        <br><br><br><br><br><br><br><br><br>
+        <h1>Welcome to the Kid's Game</h1>
+        <div class="button-class">
+            <a href="./Matching Pairs/levelMenu.html" style="height: 200px; width: 200px;"><img src="./images/matchPair.png" alt="">Matching Pairs</a>
+            <a href="./Spot The Difference/index.html" style="height: 200px; width: 200px;"><img src="./images/spotTheDiff.png" alt="">Spot The Difference</a>
+            <a href="./What Goes Together game/index.html" style="height: 200px; width: 200px;"><img src="./images/whatGoesTgther.JPG" alt="">What Goes Together</a>
+        </div>
+        <br><br>
+        <a href="./leaderboard.html" style="display: inline-block; height: 150px; width: 200px; border-radius: 50%; margin: 0 auto;"><button id="score-board">LEADERBOARD</button></a>
+    </div>
+</body>
+
+</html>

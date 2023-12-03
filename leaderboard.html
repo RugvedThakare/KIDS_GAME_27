@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .leaderboard-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .leaderboard-table th {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .leaderboard-table tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .game-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            /* border: 5px; */
+            border: 3px solid black;
+            border-radius: 5px;
+            font-weight: 700;
+            
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .game-heading {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="leaderboard-container">
+    <h2 class="leaderboard-heading">Leaderboard</h2>
+    <hr style="border: 1px solid black">
+    <br>
+    <div class="game-heading">Matching Pairs</div>
+    <div class="button-container">
+        <!-- Buttons for Game 1 -->
+        <button class="game-button" style="background-color: green;" onclick="showLeaderboard('Matching Pairs', 'Easy')">Easy</button>
+        <button class="game-button" style="background-color: orange;" onclick="showLeaderboard('Matching Pairs', 'Medium')">Medium</button>
+        <button class="game-button" style="background-color: red;" onclick="showLeaderboard('Matching Pairs', 'Hard')">Hard</button>
+    </div>
+    <br>
+    <!-- Game 2 Heading -->
+    <div class="game-heading">Spot The Difference</div>
+    <div class="button-container">
+        <!-- Buttons for Game 2 -->
+        <button class="game-button" style="background-color: green;" onclick="showLeaderboard('Spot The Difference', 'Easy')">Easy</button>
+        <button class="game-button" style="background-color: orange;" onclick="showLeaderboard('Spot The Difference', 'Medium')">Medium</button>
+        <button class="game-button" style="background-color: red;" onclick="showLeaderboard('Spot The Difference', 'Hard')">Hard</button>
+    </div>
+    <br>
+    <!-- Game 3 Heading -->
+    <div class="game-heading">What Goes Together</div>
+    <div class="button-container">
+        <!-- Buttons for Game 3 -->
+        <button class="game-button" style="background-color: green;" onclick="showLeaderboard('What Goes Together', 'Easy')">Easy</button>
+        <button class="game-button" style="background-color: orange;" onclick="showLeaderboard('What Goes Together', 'Medium')">Medium</button>
+        <button class="game-button" style="background-color: red;" onclick="showLeaderboard('What Goes Together', 'Hard')">Hard</button>
+    </div>
+    <br>
+    <br>
+    <div class="container" style="text-align: center;">
+        <a href="./index.html"><button class="game-button" style="background-color: #007bff; color: white; font-weight: 700;">Main Menu</button></a>
+    </div>
+
+    <div class="game-heading", id="headingGame"></div>
+    <table class="table leaderboard-table">
+        <thead>
+            <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Player Name</th>
+                <th scope="col">Age</th>
+                <th scope="col" id="changeTitle">Score</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+            <!-- Leaderboard content will be dynamically added here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+<script>
+    // Your Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyDpUeNE5pRN0EOIK5FowkjcSNJAaWmk1Wk",
+        authDomain: "kids-game3.firebaseapp.com",
+        projectId: "kids-game3",
+        storageBucket: "kids-game3.appspot.com",
+        messagingSenderId: "121776028608",
+        appId: "1:121776028608:web:902e46aa5374d6a35f6625",
+        measurementId: "G-0YQMHQF4MV"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Get a reference to the database
+    var database = firebase.database();
+
+    // Function to fetch and display the leaderboard
+    function showLeaderboard(game, difficulty) {
+        var scoresRef = database.ref(`${game} - ${difficulty}`);
+
+        if(game == "What Goes Together")
+        {
+            document.getElementById("changeTitle").innerHTML="Score";
+        }
+        else if(game == "Matching Pairs")
+        {
+            document.getElementById("changeTitle").innerHTML="Rating";
+        }
+        else
+        {
+            document.getElementById("changeTitle").innerHTML="Time";
+        }
+
+        scoresRef.orderByChild('score').once('value')
+            .then(snapshot => {
+                // Clear existing leaderboard content
+                document.getElementById('leaderboardBody').innerHTML = '';
+                document.getElementById('headingGame').innerHTML = game + " - " + difficulty;
+                // Populate leaderboard
+                var rank = 1;
+                var scores = [];
+
+                snapshot.forEach(childSnapshot => {
+                    scores.push(childSnapshot.val());
+                });
+
+                // Reverse the order to get descending order
+                if(game != "Spot The Difference")
+                {
+                    scores.reverse();
+                }
+
+                scores.forEach(data => {
+                    var playerName = data.playerName;
+                    var age = data.age;
+                    var playerScore = data.score;
+
+                    // Create a new row
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <th scope="row">${rank}</th>
+                        <td>${playerName}</td>
+                        <td>${age}</td>
+                        <td>${playerScore}</td>
+                    `;
+
+                    // Append row to the leaderboard table
+                    document.getElementById('leaderboardBody').appendChild(row);
+
+                    // Increment rank for the next iteration
+                    rank++;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // Fetch and display the leaderboard on page load
+    fetchLeaderboard();
+</script>
+
+</body>
+</html>

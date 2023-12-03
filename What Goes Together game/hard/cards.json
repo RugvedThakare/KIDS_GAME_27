@@ -1,0 +1,66 @@
+[
+    {
+        "image": "../pictures/dog.png",
+        "name": "dog"
+    },
+    {
+        "image": "../pictures/bone.png",
+        "name": "dog"
+    },
+    {
+        "image": "../pictures/monkey.png",
+        "name": "monkey"
+    },
+    {
+        "image": "../pictures/banana.png",
+        "name": "monkey"
+    },
+    {
+        "image": "../pictures/cow.png",
+        "name": "cow"
+    },
+    {
+        "image": "../pictures/grass.png",
+        "name": "cow"
+    },
+    {
+        "image": "../pictures/rabbit.png",
+        "name": "rabbit"
+    },
+    {
+        "image": "../pictures/carrot.png",
+        "name": "rabbit"
+    },
+    {
+        "image": "../pictures/elephant.png",
+        "name": "elephant"
+    },
+    {
+        "image": "../pictures/sugarcane.png",
+        "name": "elephant"
+    },
+    {
+        "image": "../pictures/bear.png",
+        "name": "bear"
+    },
+    {
+        "image": "../pictures/honey.png",
+        "name": "bear"
+    },
+    {
+        "image": "../pictures/cat.png",
+        "name": "cat"
+    },
+    {
+        "image": "../pictures/catfood.png",
+        "name": "cat"
+    },
+    {
+        "image": "../pictures/lion.png",
+        "name": "lion"
+    },
+    {
+        "image": "../pictures/meat.png",
+        "name": "lion"
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "image": "../pictures/dog.png",
+        "name": "dog"
+    },
+    {
+        "image": "../pictures/bone.png",
+        "name": "dog"
+    },
+    {
+        "image": "../pictures/monkey.png",
+        "name": "monkey"
+    },
+    {
+        "image": "../pictures/banana.png",
+        "name": "monkey"
+    },
+    {
+        "image": "../pictures/cow.png",
+        "name": "cow"
+    },
+    {
+        "image": "../pictures/grass.png",
+        "name": "cow"
+    }
+]

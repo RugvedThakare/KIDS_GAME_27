@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles.css">
+    <title>Kid's Game</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="backgroundMusic" controls autoplay loop>
+        <source src="../fun-kids-playful-comic-carefree-game-happy-positive-music-57026.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <button id="playPauseButton" onclick="togglePlayPause()">
+        <span id="playPauseSymbol">▶️</span>
+    </button>
+    <div class="box" id="imageContainer">
+        <!-- The image will be added dynamically based on the currentImageIndex -->
+    </div>
+    <div class="store">
+        <div id="timer">
+            <img src="../images/hourglass.png" alt="Icon description" height="24px">
+            Timer: 0s
+        </div>
+        <div id="counter">Click Count: 0</div>
+        <div id="total">Total Difference: 10</div>
+        <button id="level"><a href="../index.html">Change the Difficulty Level</a></button>
+        <p>Keep Memorizing The Differences You Have Found</p>
+    </div>
+    <div id="popup" class="popup">
+        <p>Congratulations! You have spotted all the differences.</p>
+        <p id="show-time">Time taken: </p>
+        <button id="exitGame">Exit Game</button>
+        <button id="save" onclick="saveScore()">Save</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+    <script>
+        var firebaseConfig = {
+        apiKey: "AIzaSyDpUeNE5pRN0EOIK5FowkjcSNJAaWmk1Wk",
+        authDomain: "kids-game3.firebaseapp.com",
+        projectId: "kids-game3",
+        storageBucket: "kids-game3.appspot.com",
+        messagingSenderId: "121776028608",
+        appId: "1:121776028608:web:902e46aa5374d6a35f6625",
+        measurementId: "G-0YQMHQF4MV"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Get a reference to the database
+        var database = firebase.database();
+
+        console.log("Database reference:", database);
+
+        var totTime;
+        document.addEventListener('DOMContentLoaded', function () {
+            var imageContainer = document.getElementById('imageContainer');
+            var clickCount = 0;
+            var clickedAreas = {};
+            var timerStarted = false;
+            var startTime;
+            var timerInterval;
+            var imageConfigs = [
+                { src: '../images/Difference1.jpg', areas: [
+                    { shape: 'circle', coords: '590,210,30' },
+                    { shape: 'circle', coords: '212,250,15' },
+                    { shape: 'circle', coords: '550,377,15' },
+                    { shape: 'circle', coords: '360,440,30'},
+                    { shape: 'circle', coords: '890,170,25' },
+                    { shape: 'circle', coords: '960,145,35' },
+                    { shape: 'circle', coords: '670,450,30' },
+                    { shape: 'rect', coords: '630,80,520,0' },
+                    { shape: 'rect', coords: '260,430,320,460' },
+                    { shape: 'circle', coords: '360,290,15' },
+                ] },
+                { src: '../images/Difference.jpg', areas: [
+                    { shape: 'circle', coords: '130,37,20' },
+                    { shape: 'circle', coords: '454,40,20' },
+                    { shape: 'circle', coords: '50,282,15' },
+                    { shape: 'circle', coords: '355,200,20'},
+                    { shape: 'circle', coords: '30,252,20' },
+                    { shape: 'circle', coords: '80,460,20' },
+                    { shape: 'circle', coords: '80,500,20' },
+                    { shape: 'circle', coords: '450,570,20' },
+                    { shape: 'circle', coords: '440,390,20' },
+                    { shape: 'circle', coords: '290,360,15' },
+                ] },
+                { src: '../images/Difference8.jpg', areas: [
+                    { shape: 'rect', coords: '5,5,220,90' },
+                    { shape: 'circle', coords: '80,160,10' },
+                    { shape: 'circle', coords: '60,425,30' },
+                    { shape: 'circle', coords: '380,420,30'},
+                    { shape: 'rect', coords: '370,180,430,300' },
+                    { shape: 'circle', coords: '810,235,30' },
+                    { shape: 'circle', coords: '350,370,20' },
+                    { shape: 'circle', coords: '260,380,20' },
+                    { shape: 'circle', coords: '170,200,30' },
+                    { shape: 'rect', coords: '180,280,230,330' },
+                ] },
+            ];
+            var min = 1;
+            var max = 10;
+            var currentImageIndex = Math.floor((Math.random() * (max - min + 1)) % imageConfigs.length);
+
+            function setupGame() {
+                var currentImageConfig = imageConfigs[currentImageIndex];
+                imageContainer.innerHTML = `<img src="${currentImageConfig.src}" alt="Image" usemap="#show">`;
+                var areas = document.createElement('map');
+                areas.setAttribute('name', 'show');
+
+                currentImageConfig.areas.forEach((area, index) => {
+                    var areaElement = document.createElement('area');
+                    areaElement.id = `area${index + 1}`;
+                    areaElement.shape = area.shape;
+                    areaElement.coords = area.coords;
+                    areaElement.href = '';
+                    areaElement.alt = 'spotted';
+                    areas.appendChild(areaElement);
+                });
+
+                imageContainer.appendChild(areas);
+
+                // Add event listeners after the areas have been created
+                areas.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    startTimer();
+                    var clickedArea = event.target;
+                    if (clickedArea.tagName === 'AREA' && !clickedAreas[clickedArea.id]) {
+                        clickedArea.classList.add('highlighted');
+                        clickedAreas[clickedArea.id] = true;
+                        clickCount++;
+                        updateCounter();
+
+                        if (clickCount === currentImageConfig.areas.length) {
+                            showPopup();
+                        }
+                    }
+                });
+            }
+
+            function startTimer() {
+                if (!timerStarted) {
+                    startTime = new Date().getTime();
+                    timerStarted = true;
+                    timerInterval = setInterval(updateTimer, 1000);
+                }
+            }
+
+            function showPopup() {
+                clearInterval(timerInterval);
+                document.getElementById('timer').textContent = 'Timer: 0s';
+                var popup = document.getElementById('popup');
+                popup.style.display = 'block';
+                var showTime = document.getElementById("show-time");
+                showTime.textContent += totTime.toString() + ' seconds'; 
+                document.getElementById('exitGame').addEventListener('click', function () {
+                    // Exit the game (you can customize this action)
+                    window.location.href = '../fun.html';
+                });
+            }
+
+            function updateCounter() {
+                document.getElementById('counter').textContent = 'Click Count: ' + clickCount;
+            }
+
+            function updateTimer() {
+                var currentTime = new Date().getTime();
+                var elapsedTime = Math.floor((currentTime - startTime) / 1000);
+                totTime = elapsedTime;
+                document.getElementById('timer').textContent = 'Timer: ' + elapsedTime + 's';
+            }
+
+            setupGame();
+        });
+
+        function saveScore() {
+
+            let playerName = prompt("Enter your name:");
+            if (playerName)
+            {
+                const age = prompt("Enter your age:");
+
+                if (age)
+                {
+                    // Get a reference to the 'scores' node in the database
+                    var scoresRef = database.ref('Spot The Difference - Hard');
+
+                    console.log("Database name:", scoresRef);
+
+                    // Push a new score to the 'scores' node
+                    scoresRef.push({
+                        playerName: playerName,
+                        age: age,
+                        score: totTime + " seconds"
+                    });
+                    alert("Score saved!");
+                    document.getElementById("save").style.display = 'none';
+                }
+            }
+        }
+        function togglePlayPause() {
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            const playPauseSymbol = document.getElementById('playPauseSymbol');
+
+            if (backgroundMusic.paused) {
+            // If currently paused, play and change symbol to ⏸ (pause)
+            backgroundMusic.play();
+            playPauseSymbol.textContent = '⏸';
+            } else {
+            // If currently playing, pause and change symbol to ▶️ (play)
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+            playPauseSymbol.textContent = '▶️';
+            }
+        }
+    </script>
+</body>
+
+</html>

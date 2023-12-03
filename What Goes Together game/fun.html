@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Image Viewer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            background-color: antiquewhite;
+        }
+
+        #imageContainer {
+            max-width: 70%;
+            text-align: center;
+        }
+
+        img {
+            max-width: 60%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 10px solid black;
+        }
+
+        button {
+            padding: 30px 50px;
+            font-size: 24px;
+            background-color: rgb(32, 105, 10);
+            color: #fff;
+            border: 4px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <a href="./index.html" ><button>Done Reading</button></a>
+<div id="imageContainer">
+    <h1>Take A Look At This Fun Fact <br> isn't it Amazing!</h1>
+    <img id="randomImage" src="" alt="Random Image">
+    
+</div>
+
+
+<script>
+    // Array of image paths
+    const imagePaths = [
+        '../fun_fact/1.png',
+        '../fun_fact/2.png',
+        '../fun_fact/3.png',
+        '../fun_fact/4.png',
+        '../fun_fact/5.png',
+        '../fun_fact/6.png',
+        '../fun_fact/7.png',
+        '../fun_fact/8.png',
+        '../fun_fact/9.png',
+        '../fun_fact/10.png',
+        '../fun_fact/11.png',
+        '../fun_fact/12.png',
+        '../fun_fact/13.png',
+        '../fun_fact/14.png',
+        '../fun_fact/15.png'
+    ];
+
+    function showRandomImage() {
+        const randomIndex = Math.floor(Math.random() * imagePaths.length);
+        const randomImagePath = imagePaths[randomIndex];
+        document.getElementById('randomImage').src = randomImagePath;
+    }
+
+    showRandomImage();
+</script>
+
+</body>
+</html>
